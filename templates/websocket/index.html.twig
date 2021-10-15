@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Chat
+{% endblock %}
+{% block body %}
+	<header>
+		<a class="btn btn-outline-secondary" data-bs-toggle="offcanvas" href="#offcanvas" role="button" aria-controls="offcanvas">
+			<i class="fas fa-bars"></i>
+		</a>
+
+		<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvas" aria-labelledby="offcanvasLabel">
+			<div class="offcanvas-header">
+				<h5 class="offcanvas-title" id="offcanvasLabel">You are logged in as
+					{{ app.user.username }}</h5>
+				<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+			</div>
+			<div class="offcanvas-body">
+				<ul class="list-group">
+					<li class="list-group-item">
+						<a class="list-group-item btn btn-lg btn-primary" role="button" href="{{ path("app_logout") }}">
+							Logout
+						</a>
+					</li>
+					{% if "ROLE_ADMIN" in app.user.roles %}
+						<li class="list-group-item"></li>
+					{% endif %}
+				</ul>
+			</div>
+		</div>
+	</header>
+	<main>
+		<span id="user" data-username="{{ app.user.username }}" data-id="{{ app.user.id }}"></span>
+		<div id="chat"></div>
+		<form>
+			<div class="form-row align-items-center">
+				<div class="col-auto">
+					<div class="input-group">
+						<input type="text" id="message" class="form-control" type="text">
+						<div class="input-group-append">
+							<button id="sendBtn" class="btn btn-outline-secondary" type="button">
+								<i class="far fa-paper-plane"></i>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+	</main>
+{% endblock %}

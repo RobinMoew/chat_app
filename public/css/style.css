@@ -1,0 +1,36 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: rgb(247, 247, 247);
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0.5rem 1rem;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#user {
+    display: none;
+}
+
+#chat {
+    height: 400px;
+    width: 600px;
+    border: solid lightgrey 1px;
+    overflow: auto;
+    margin-bottom: 20px;
+}
+
+.message {
+    padding: 10px 5px;
+    margin-bottom: 10px;
+    border-bottom: solid lightgrey 1px;
+}
