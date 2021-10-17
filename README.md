@@ -2,4 +2,4 @@
 
 composer install
 
-Then too start WebSocketServer: php bin/console run:websocket-server
+To start WebSocketServer: php bin/console run:websocket-server
