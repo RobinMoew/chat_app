@@ -21,16 +21,30 @@
 							Logout
 						</a>
 					</li>
-					{% if "ROLE_ADMIN" in app.user.roles %}
-						<li class="list-group-item"></li>
-					{% endif %}
+					<li class="list-group-item">
+						<ul class="list-group">
+							{% for user in users %}
+								<li class="list-group-item d-flex justify-content-between align-items-center">
+									{{ user.username }}
+									<i class="fas fa-circle {% if user.isOnline %}connected{% else %}offline{% endif %}"></i>
+								</li>
+							{% endfor %}
+						</ul>
+					</li>
 				</ul>
 			</div>
 		</div>
 	</header>
 	<main>
 		<span id="user" data-username="{{ app.user.username }}" data-id="{{ app.user.id }}"></span>
-		<div id="chat"></div>
+		<div id="chat">
+			{% for message in messages %}
+				<div class='message'>
+					<strong>{{ message.sender.username }}:</strong>
+					{{ message.message }}
+				</div>
+			{% endfor %}
+		</div>
 		<form>
 			<div class="form-row align-items-center">
 				<div class="col-auto">

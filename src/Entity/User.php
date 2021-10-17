@@ -54,6 +54,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $ressourceId;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $is_online = false;
+
     public function __construct()
     {
         $this->sent = new ArrayCollection();
@@ -212,6 +217,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setRessourceId(?int $ressourceId): self
     {
         $this->ressourceId = $ressourceId;
+
+        return $this;
+    }
+
+    public function getIsOnline(): ?bool
+    {
+        return $this->is_online;
+    }
+
+    public function setIsOnline(bool $is_online): self
+    {
+        $this->is_online = $is_online;
 
         return $this;
     }

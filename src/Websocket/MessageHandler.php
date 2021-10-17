@@ -2,8 +2,10 @@
 
 namespace App\Websocket;
 
+use App\Entity\Message;
 use App\Service\MessageService;
 use App\Service\UserService;
+use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ObjectManager;
 use Exception;
 use Ratchet\ConnectionInterface;
@@ -13,20 +15,26 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class MessageHandler implements MessageComponentInterface
 {
     protected $connections;
+    protected $em;
 
-    public function __construct()
+    public function __construct(EntityManager $em)
     {
         $this->connections = new \SplObjectStorage;
+        $this->em = $em;
     }
 
     public function onOpen(ConnectionInterface $conn)
     {
         $this->connections->attach($conn);
-        $this->container->get('doctrine');
         $querystring = $conn->httpRequest->getUri()->getQuery();
-        $query = explode('=', $querystring);
-        $user = $this->container->get(UserRepository::class)->findById($query[1]);
-        echo "{$user->getUsername()}\n";
+        $query = explode('=', $querystring); //? query[1] -> userId
+        $user = $this->em->getRepository('App:User')->find($query[1]);
+        $user->setIsOnline(true);
+        $user->setRessourceId($conn->resourceId);
+        $this->em->persist($user);
+        $this->em->flush();
+
+        echo "{$user->getUsername()} has connected.\n";
         echo "New connection! ({$conn->resourceId})\n";
     }
 
@@ -38,11 +46,25 @@ class MessageHandler implements MessageComponentInterface
             }
             $connection->send($msg);
         }
+        $user = $this->em->getRepository('App:User')->findOneBy(['ressourceId' => $connection->resourceId]);
+        $arrayMsg = json_decode($msg, true);
+        $message = new Message();
+        $message->setMessage($arrayMsg['message'])
+            ->setCreatedAt(new \DateTimeImmutable())
+            ->setIsRead(false)
+            ->setSender($user);
+        $this->em->persist($message);
+        $this->em->flush();
     }
 
     public function onClose(ConnectionInterface $conn)
     {
         $this->connections->detach($conn);
+        $user = $this->em->getRepository('App:User')->findOneBy(['ressourceId' => $conn->resourceId]);
+        $user->setIsOnline(false);
+        $user->setRessourceId(null);
+        $this->em->persist($user);
+        $this->em->flush();
         echo "Connection {$conn->resourceId} has disconnected\n";
     }
 

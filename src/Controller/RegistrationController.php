@@ -33,7 +33,8 @@ class RegistrationController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);
             $entityManager->flush();
-            // do anything else you need here, like send an email
+            
+            $this->addFlash('success', 'The registration is successfull');
 
             return $this->redirectToRoute('websocket');
         }

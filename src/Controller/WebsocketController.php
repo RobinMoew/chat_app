@@ -13,8 +13,13 @@ class WebsocketController extends AbstractController
      */
     public function index(): Response
     {
+        $entityManager = $this->getDoctrine()->getManager();
+        $users = $entityManager->getRepository('App:User')->findAll();
+        $messages = $entityManager->getRepository('App:Message')->findAll();
+
         return $this->render('websocket/index.html.twig', [
-            'controller_name' => 'WebsocketController',
+            'users' => $users,
+            'messages' => $messages,
         ]);
     }
 }

@@ -6,6 +6,7 @@ use Ratchet\Http\HttpServer;
 use Ratchet\Server\IoServer;
 use Ratchet\WebSocket\WsServer;
 use App\Websocket\MessageHandler;
+use Doctrine\ORM\EntityManagerInterface;
 use Ratchet\App;
 use Ratchet\Server\EchoServer;
 use Symfony\Component\Console\Command\Command;
@@ -15,6 +16,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 class WebsocketServerCommand extends Command
 {
     protected static $defaultName = "run:websocket-server";
+
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        parent::__construct();
+        $this->entityManager = $entityManager;
+    }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -31,7 +40,7 @@ class WebsocketServerCommand extends Command
         // );
         // $server->run();
         $app = new App("localhost", 8080, '0.0.0.0');
-        $app->route('/chat', new MessageHandler, array('*'));
+        $app->route('/chat', new MessageHandler($this->entityManager), array('*'));
         $app->run();
         return 0;
     }
